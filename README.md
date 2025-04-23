@@ -1,6 +1,6 @@
 # Context-Aware Assistant
 
-A sophisticated AI assistant with RAG (Retrieval-Augmented Generation) capabilities, content classification, and external API integration through MCP (Media Context Protocol).
+A  AI assistant with RAG (Retrieval-Augmented Generation) capabilities, content classification, and external API integration through MCP (Model Context Protocol).
 
 ## Features
 
@@ -11,6 +11,21 @@ A sophisticated AI assistant with RAG (Retrieval-Augmented Generation) capabilit
 - **LangChain Integration**: Uses LangChain for document loading and text splitting
 - **Modern Frontend**: React-based UI for interacting with the assistant
 - **Containerized Deployment**: Docker and Docker Compose setup for easy deployment
+
+## System Architecture
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Frontend  │────▶│ Backend API │────▶│ ChromaDB    │
+│  (React)    │     │  (FastAPI)  │     │(Vector DB)  │
+└─────────────┘     └──────┬──────┘     └─────────────┘
+                           │
+                           ▼
+                    ┌─────────────┐     ┌─────────────┐
+                    │ MCP Server  │────▶│ TheSportsDB │
+                    │  (FastAPI)  │     │    API      │
+                    └─────────────┘     └─────────────┘
+```
 
 ## Project Structure
 
@@ -183,3 +198,40 @@ To add your own data to the system:
 ## License
 
 [MIT License](LICENSE)
+
+## Implementation Plan
+
+The project follows a phased implementation approach:
+
+### Phase 1: Foundation & Data Preparation (Static RAG)
+- Project setup with Python environment and dependencies
+- ChromaDB setup for vector database
+- Data collection and preparation for the four collections
+- Data processing and embedding using sentence transformers
+- Indexing data into ChromaDB
+
+### Phase 2: Core Service Development (MCP & Retrieval)
+- MCP server development for sports data integration
+- Retrieval logic implementation with vector search
+- Hybrid retrieval with Whoosh for keyword search fallback
+- Content classification implementation
+
+### Phase 3: Agent Logic & LLM Integration
+- Agent logic design and implementation
+- LLM setup and integration
+- Synthesis step implementation for generating responses
+
+### Phase 4: API & Frontend
+- Backend API development with FastAPI
+- React frontend development
+- Connection between frontend and backend
+
+### Phase 5: Deployment & Observability
+- Dockerization of services
+- Docker Compose setup
+- Logging implementation
+- Metrics collection (optional)
+- Testing
+- Kubernetes deployment (optional)
+
+**Note:** Due to time constraints, no actual data was used for the production metadata or industry news collections. The system is set up to handle these data types, but they are currently empty placeholders.

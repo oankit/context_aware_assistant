@@ -23,7 +23,7 @@ MCP_SERVER_PORT = int(os.getenv("MCP_SERVER_PORT", "8001"))
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Media Context Protocol Server",
+    title="Model Context Protocol Server",
     description="MCP Server for sports data integration",
     version="1.0.0"
 )
