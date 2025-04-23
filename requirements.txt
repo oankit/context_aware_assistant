@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+chromadb
+sentence-transformers[onnx]
+python-dotenv
+requests
+Whoosh
+transformers
+torch
+prometheus-fastapi-instrumentator
+pytest

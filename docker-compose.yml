@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # ChromaDB service
+  chroma_db:
+    image: chromadb/chroma
+    container_name: chroma_db
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MCP Server service
+  mcp_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    container_name: mcp_server
+    ports:
+      - "8001:8001"
+    depends_on:
+      - chroma_db
+    environment:
+      - CHROMA_HOST=chroma_db
+      - CHROMA_PORT=8000
+      - MCP_SERVER_PORT=8001
+      - MAIN_SERVER_PORT=8002
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/mcp/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend
+    ports:
+      - "8002:8002"
+    depends_on:
+      - chroma_db
+      - mcp_server
+    environment:
+      - CHROMA_HOST=chroma_db
+      - CHROMA_PORT=8000
+      - MCP_SERVER_PORT=8001
+      - MAIN_SERVER_PORT=8002
+      - MCP_SERVER_URL=http://mcp_server:8001
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Frontend service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  chroma_data:
