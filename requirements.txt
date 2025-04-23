@@ -16,3 +16,5 @@ jq
 beautifulsoup4
 google-cloud-bigquery
 pypdf
+openai
+langchain-community

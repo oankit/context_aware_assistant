@@ -5,8 +5,7 @@ import logging
 import requests
 from typing import Dict, List, Any, Optional, Union
 
-import torch
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from openai import OpenAI
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 
@@ -29,23 +28,22 @@ MAX_CONTEXT_LENGTH = 1024  # Adjust based on model requirements
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
 classifier = get_classifier()
 
-# Initialize LLM
-model_name = "google/flan-t5-base"  # Can be changed to larger model if needed
-tokenizer = None
-model = None
+# Initialize OpenAI client
+openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+openai_client = None
 
 def load_llm():
-    """Load the LLM model and tokenizer."""
-    global tokenizer, model
+    """Initialize the OpenAI client."""
+    global openai_client
     
-    if tokenizer is None or model is None:
-        logger.info(f"Loading LLM model: {model_name}")
+    if openai_client is None:
+        logger.info(f"Initializing OpenAI client with model: {openai_model}")
         try:
-            tokenizer = AutoTokenizer.from_pretrained(model_name)
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-            logger.info("LLM model loaded successfully")
+            openai_client = OpenAI(api_key=openai_api_key)
+            logger.info("OpenAI client initialized successfully")
         except Exception as e:
-            logger.error(f"Error loading LLM model: {e}")
+            logger.error(f"Error initializing OpenAI client: {e}")
             raise
 
 def extract_entities(text: str) -> List[str]:
@@ -295,7 +293,7 @@ def run_query(user_query: str) -> Dict[str, Any]:
         tags[snippet_id] = classification_result
     
     # Step 5: Call MCP if needed
-    mcp_data = None
+    mcp_data = {}  # Initialize as empty dict instead of None
     if needs_mcp:
         # Extract potential entities
         entities = extract_entities(user_query)
@@ -325,20 +323,23 @@ def run_query(user_query: str) -> Dict[str, Any]:
     # Step 6: Build the LLM prompt
     prompt = build_llm_prompt(user_query, rag_snippets, tags, mcp_data)
     
-    # Step 7: Generate the answer using the LLM
-    inputs = tokenizer(prompt, return_tensors="pt", max_length=MAX_CONTEXT_LENGTH, truncation=True)
-    
-    with torch.no_grad():
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=150,
-            num_beams=4,
+    # Step 7: Generate the answer using OpenAI
+    try:
+        response = openai_client.chat.completions.create(
+            model=openai_model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that provides accurate and concise answers based on the provided context."},
+                {"role": "user", "content": prompt}
+            ],
             temperature=0.7,
-            top_p=0.9,
-            do_sample=True
+            max_tokens=150,
+            top_p=0.9
         )
-    
-    final_answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        final_answer = response.choices[0].message.content.strip()
+        logger.info("Generated response from OpenAI")
+    except Exception as e:
+        logger.error(f"Error generating response from OpenAI: {e}")
+        final_answer = "I'm sorry, I couldn't generate a response at this time."
     
     # Step 8: Return the results
     return {

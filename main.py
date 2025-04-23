@@ -48,7 +48,7 @@ class QueryResponse(BaseModel):
     final_answer: str
     rag_snippets: list
     tags: dict
-    mcp_data: dict = None
+    mcp_data: dict = {}  # Default to empty dict instead of None
 
 @app.get("/")
 async def root():

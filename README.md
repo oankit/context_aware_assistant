@@ -66,14 +66,50 @@ context_aware_assistant/
 
 2. Set up the Python virtual environment:
    ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   **Use a dedicated venv (recommended)**
+   Create a fresh virtualenv in your project root:  
+   ```bash
+   python -m venv .venv
+   ```  
+   Activate it:  
+
+   **Windows (PowerShell)**  
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   ```  
+
+   **Windows (cmd.exe)**  
+   ```cmd
+   .\.venv\Scripts\activate.bat
+   ```  
+
+   Re-install your requirements:  
+   ```bash
+   pip install --upgrade pip
    pip install -r requirements.txt
+   ```
    ```
 
 3. Set up environment variables:
-   - Copy `.env.example` to `.env` (if available)
-   - Update the `.env` file with your API keys and configuration
+   - Create a `.env` file in the project root with the following configuration:
+   ```
+   # API Keys
+   SPORTS_DB_API_KEY="3"  # API key for the TheSportsDB custom MCP server
+   OPENAI_API_KEY="your_openai_api_key_here"
+
+   # Database Configuration
+   CHROMA_HOST=localhost
+   CHROMA_PORT=8000
+
+   # Server Configuration
+   MCP_SERVER_PORT=8001
+   MAIN_SERVER_PORT=8002
+
+   # LLM Configuration
+   OPENAI_MODEL=gpt-3.5-turbo
+   ```
+   - Replace `your_openai_api_key_here` with your actual OpenAI API key
+   - Note: The sports data API key "3" is already set for the TheSportsDB custom MCP server
 
 4. Run ChromaDB:
    ```
@@ -139,7 +175,8 @@ To add your own data to the system:
 
 ## Customization
 
-- **LLM Model**: You can change the LLM model in `agent.py` by updating the `model_name` variable
+- **OpenAI Model**: You can change the OpenAI model in the `.env` file by updating the `OPENAI_MODEL` variable (e.g., "gpt-4" for better quality)
+- **OpenAI Parameters**: Adjust temperature, max_tokens, and other parameters in the `run_query` function in `agent.py`
 - **Embedding Model**: The embedding model can be changed in `ingest.py` and `retriever.py`
 - **Classification Labels**: Update the `DEFAULT_LABELS` in `classifier.py` to customize content classification
 
