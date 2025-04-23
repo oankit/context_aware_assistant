@@ -9,3 +9,10 @@ transformers
 torch
 prometheus-fastapi-instrumentator
 pytest
+langchain
+langchain-text-splitters
+unstructured
+jq
+beautifulsoup4
+google-cloud-bigquery
+pypdf

@@ -8,6 +8,7 @@ A sophisticated AI assistant with RAG (Retrieval-Augmented Generation) capabilit
 - **Hybrid Search**: Combines vector search and keyword search for better results
 - **Content Classification**: Automatically classifies content using zero-shot learning
 - **External API Integration**: Connects to TheSportsDB API for live sports data
+- **LangChain Integration**: Uses LangChain for document loading and text splitting
 - **Modern Frontend**: React-based UI for interacting with the assistant
 - **Containerized Deployment**: Docker and Docker Compose setup for easy deployment
 
