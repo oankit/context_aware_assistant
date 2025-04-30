@@ -1,6 +1,12 @@
 # Context-Aware Assistant
 
-A  AI assistant with RAG (Retrieval-Augmented Generation) capabilities, content classification, and external API integration through MCP (Model Context Protocol).
+An AI assistant with RAG (Retrieval-Augmented Generation) capabilities, content classification, and external API integration through MCP (Model Context Protocol).  
+🧠 Built using the ReACT (Reason + Act) framework for agent decision-making.
+
+📽️ [Watch the Demo on Loom](https://www.loom.com/share/7e0992c92ae642c399d70e72de0e8d42?sid=0a34f6bd-9ed7-4036-9d20-42604a2e9890)
+
+![Context-Aware Assistant Screenshot](./media/screenshot.png)
+
 
 ## Features
 

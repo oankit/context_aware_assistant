@@ -2,4 +2,5 @@ venv/
 .venv/
 frontend/node_modules/
 whoosh_index/
-.env/
+__pycache__/
+/.env
